@@ -4,9 +4,10 @@
 const express = require("express");
 const morgan = require("morgan");
 const routes = require("./routes");
+const bodyParser = require("body-parser");
+
 
 const { sequelize, models } = require("./db");
-console.log("MODELS: " + sequelize.models.name);
 //const { User, Course } = models;
 
 // variable to enable global error logging
@@ -17,9 +18,7 @@ console.log("TESTING THE CONNECTION TO THE DATABASE");
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Synchronizing the models with the database...");
-
-    return sequelize.sync();
+    console.log("CONNECTION SUCCESFULLY ESTABLISHED TO THE DATABASE");
   })
   .catch(() => {
     console.log("CONNECTION FAILED");
@@ -29,11 +28,11 @@ sequelize
 const app = express();
 app.use(express.json());
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // setup morgan which gives us http request logging
 app.use(morgan("dev"));
-
-// TODO setup your api routes here
-app.use("/api", routes);
 
 // setup a friendly greeting for the root route
 app.get("/", (req, res) => {
@@ -41,6 +40,9 @@ app.get("/", (req, res) => {
     message: "Welcome to the REST API project!"
   });
 });
+
+
+app.use("/api", routes);
 
 // send 404 if no other route matched
 app.use((req, res) => {
