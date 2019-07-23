@@ -4,7 +4,7 @@
     "password": null,
     "database": "fsjstd-restapi.db",
     "host": "127.0.0.1",
-    "dialect": "mysql",
+    "dialect": "sqlite",
     "operatorsAliases": false
   },
   "test": {
@@ -12,7 +12,7 @@
     "password": null,
     "database": "fsjstd-restapi.db",
     "host": "127.0.0.1",
-    "dialect": "mysql",
+    "dialect": "sqlite",
     "operatorsAliases": false
   },
   "production": {
@@ -20,7 +20,7 @@
     "password": null,
     "database": "fsjstd-restapi.db",
     "host": "127.0.0.1",
-    "dialect": "mysql",
+    "dialect": "sqlite",
     "operatorsAliases": false
   }
 }
