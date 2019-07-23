@@ -6,7 +6,6 @@ const morgan = require("morgan");
 const routes = require("./routes");
 const bodyParser = require("body-parser");
 
-
 const { sequelize, models } = require("./db");
 //const { User, Course } = models;
 
@@ -40,7 +39,6 @@ app.get("/", (req, res) => {
     message: "Welcome to the REST API project!"
   });
 });
-
 
 app.use("/api", routes);
 
