@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 
 const { sequelize, models } = require("./db");
 //const { User, Course } = models;
-
 // variable to enable global error logging
 const enableGlobalErrorLogging =
   process.env.ENABLE_GLOBAL_ERROR_LOGGING === "true";
@@ -18,6 +17,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("CONNECTION SUCCESFULLY ESTABLISHED TO THE DATABASE");
+    return sequelize.sync();
   })
   .catch(() => {
     console.log("CONNECTION FAILED");
