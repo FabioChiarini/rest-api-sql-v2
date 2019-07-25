@@ -53,12 +53,6 @@ router.get("/users", authenticateUser, (req, res, next) => {
     name: user.firstName,
     username: user.emailAddress
   });
-  /*
-  User.findAll({ raw: true }).then(users => {
-    console.log(users);
-
-    res.status(200).redirect("/");
-  });*/
 });
 
 router.post(
