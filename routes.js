@@ -31,8 +31,8 @@ router.post("/users", [
   .withMessage('Please provide a value for "firstName"'),
   check('lastName').exists({ checkNull: true, checkFalsy: true })
   .withMessage('Please provide a value for "lastName"'),
-  check('emailAddress').exists({ checkNull: true, checkFalsy: true })
-  .withMessage('Please provide a value for "emailAddress"'),
+  check('emailAddress').exists({ checkNull: true, checkFalsy: true }).isEmail()
+  .withMessage('Please provide a valid value for "emailAddress"'),
   check('password').exists({ checkNull: true, checkFalsy: true })
   .withMessage('Please provide a value for "password"'),
 
