@@ -24,6 +24,7 @@ const authenticateUser = (req, res, next) => {
         if (authenticated) {
           console.log(`Welcome back dear ${user.firstName} ${user.lastName}`);
           req.currentUser = user;
+          next();
           console.log("DDDDDD");
           console.log(req.currentUser);
         } else {
@@ -37,27 +38,18 @@ const authenticateUser = (req, res, next) => {
     message = `Auth header not found`;
   }
 
-  console.log("CCCCCCCC");
-  console.log(req.currentUser);
-
   if (message) {
     console.warn(message);
     res.status(401).json({
       message: "ACCESS DENIED"
     });
-  } else {
-    console.log("BBBBB");
-    console.log(req.currentUser);
-    next();
   }
 };
 
 router.get("/users", authenticateUser, (req, res, next) => {
-  console.log("AAAA");
-  console.log(req.currentUser);
   const user = req.currentUser;
 
-  res.JSON({
+  res.json({
     name: user.firstName,
     username: user.emailAddress
   });
