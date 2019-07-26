@@ -131,8 +131,12 @@ router.post(
     }
 
     Course.create(course)
-      .then(() => {
-        res.status(201).redirect("/");
+      .then(createdCourse => {
+        console.log(createdCourse);
+        res
+          .location(`/api/courses/${createdCourse.id}`)
+          .status(201)
+          .end();
       })
       .catch(err => {
         res.status(500).json(err);
@@ -142,9 +146,17 @@ router.post(
 
 // Returns a the course (including the user that owns the course) for the provided course ID
 router.get("/courses/:id", (req, res, next) => {
-  Course.findByPk(req.params.id).then(course => {
-    res.status(200).json(course);
-  });
+  Course.findByPk(req.params.id)
+    .then(course => {
+      if (course) {
+        res.status(200).json(course);
+      } else {
+        res.status(400).json("Course not found");
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
