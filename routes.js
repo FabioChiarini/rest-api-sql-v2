@@ -45,6 +45,7 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
+// Returns the currently authenticated user
 router.get("/users", authenticateUser, (req, res, next) => {
   const user = req.currentUser;
 
@@ -54,6 +55,7 @@ router.get("/users", authenticateUser, (req, res, next) => {
   });
 });
 
+// Creates a user, sets the Location header to "/", and returns no content
 router.post(
   "/users",
   [
@@ -92,12 +94,16 @@ router.post(
 
 // Returns a list of courses (including the user that owns each course)
 router.get("/courses", (req, res, next) => {
-  Course.findAll().then(courses => {
-    res
-      .json(courses)
-      .status(200)
-      .end();
-  });
+  Course.findAll()
+    .then(courses => {
+      res
+        .json(courses)
+        .status(200)
+        .end();
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
 
 // Creates a course, sets the Location header to the URI for the course, and returns no content
@@ -133,5 +139,12 @@ router.post(
       });
   }
 );
+
+// Returns a the course (including the user that owns the course) for the provided course ID
+router.get("/courses/:id", (req, res, next) => {
+  Course.findByPk(req.params.id).then(course => {
+    res.status(200).json(course);
+  });
+});
 
 module.exports = router;
