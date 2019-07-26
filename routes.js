@@ -8,6 +8,7 @@ const bcryptjs = require("bcryptjs");
 const auth = require("basic-auth");
 
 var User = require("./db").User;
+var Course = require("./db").Course;
 
 const authenticateUser = (req, res, next) => {
   let message = null;
@@ -25,8 +26,6 @@ const authenticateUser = (req, res, next) => {
           console.log(`Welcome back dear ${user.firstName} ${user.lastName}`);
           req.currentUser = user;
           next();
-          console.log("DDDDDD");
-          console.log(req.currentUser);
         } else {
           message = `Authentication failure for username: ${user.emailAddress}`;
         }
@@ -90,5 +89,24 @@ router.post(
       });
   }
 );
+
+// Returns a list of courses (including the user that owns each course)
+router.get("/courses", (req, res, next) => {
+  Course.findAll().then(courses => {
+    res
+      .json(courses)
+      .status(200)
+      .end();
+  });
+});
+
+// Creates a course, sets the Location header to the URI for the course, and returns no content
+router.post("/courses", (req, res, next) => {
+  const course = req.body;
+  console.log(course);
+  Course.create(course).then(() => {
+    res.status(201).redirect("/");
+  });
+});
 
 module.exports = router;
