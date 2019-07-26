@@ -94,7 +94,16 @@ router.post(
 
 // Returns a list of courses (including the user that owns each course)
 router.get("/courses", (req, res, next) => {
-  Course.findAll()
+  Course.findAll({
+    attributes: [
+      "id",
+      "title",
+      "description",
+      "estimatedTime",
+      "materialsNeeded",
+      "userId"
+    ]
+  })
     .then(courses => {
       res
         .json(courses)
