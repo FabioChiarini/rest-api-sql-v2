@@ -85,7 +85,7 @@ router.post(
         res.status(201).redirect("/");
       })
       .catch(err => {
-        console.log(err);
+        res.status(500).json(err);
       });
   }
 );
@@ -101,12 +101,37 @@ router.get("/courses", (req, res, next) => {
 });
 
 // Creates a course, sets the Location header to the URI for the course, and returns no content
-router.post("/courses", (req, res, next) => {
-  const course = req.body;
-  console.log(course);
-  Course.create(course).then(() => {
-    res.status(201).redirect("/");
-  });
-});
+router.post(
+  "/courses",
+  [
+    check("title")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "title"'),
+    check("description")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "firstName"'),
+    check("userId")
+      .exists({ checkNull: true, checkFalsy: true })
+      .isNumeric()
+      .withMessage('Please provide a value for "userId"')
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const course = req.body;
+
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map(error => error.msg);
+      return res.status(400).json({ errors: errorMessages });
+    }
+
+    Course.create(course)
+      .then(() => {
+        res.status(201).redirect("/");
+      })
+      .catch(err => {
+        res.status(500).json(err);
+      });
+  }
+);
 
 module.exports = router;
