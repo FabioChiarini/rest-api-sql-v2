@@ -132,7 +132,6 @@ router.post(
 
     Course.create(course)
       .then(createdCourse => {
-        console.log(createdCourse);
         res
           .location(`/api/courses/${createdCourse.id}`)
           .status(201)
@@ -157,6 +156,18 @@ router.get("/courses/:id", (req, res, next) => {
     .catch(err => {
       res.status(500).json(err);
     });
+});
+
+// Deletes a course and returns no content
+router.delete("/courses/:id", (req, res, next) => {
+  Course.findByPk(req.params.id).then(course => {
+    if (course) {
+      course.destroy();
+      res.status(204).end();
+    } else {
+      res.status(400).json("Course not found");
+    }
+  });
 });
 
 module.exports = router;
