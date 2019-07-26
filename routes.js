@@ -83,6 +83,20 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const user = req.body;
+    console.log("EMAIL " + user.emailAddress);
+    User.findOne({
+      where: {
+        emailAddress: user.emailAddress
+      }
+    }).then(match => {
+      console.log(match);
+      if (match) {
+        console.log("ESISTE");
+      } else {
+        console.log("NON ESISTE");
+      }
+    });
+
     user.password = bcryptjs.hashSync(user.password);
     User.create(user)
       .then(() => {
