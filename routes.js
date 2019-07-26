@@ -109,6 +109,7 @@ router.get("/courses", (req, res, next) => {
 // Creates a course, sets the Location header to the URI for the course, and returns no content
 router.post(
   "/courses",
+  authenticateUser,
   [
     check("title")
       .exists({ checkNull: true, checkFalsy: true })
@@ -159,7 +160,7 @@ router.get("/courses/:id", (req, res, next) => {
 });
 
 // Deletes a course and returns no content
-router.delete("/courses/:id", (req, res, next) => {
+router.delete("/courses/:id", authenticateUser, (req, res, next) => {
   Course.findByPk(req.params.id).then(course => {
     if (course) {
       course.destroy();
@@ -171,7 +172,7 @@ router.delete("/courses/:id", (req, res, next) => {
 });
 
 // Updates a course and returns no content
-router.put("/courses/:id", (req, res, next) => {
+router.put("/courses/:id", authenticateUser, (req, res, next) => {
   Course.findByPk(req.params.id).then(course => {
     if (course) {
       course.update(req.body);
