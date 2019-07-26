@@ -14,7 +14,9 @@ const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
   if (credentials) {
-    User.findAll().then(users => {
+    User.findAll({
+      attributes: ["id", "firstName", "lastName", "emailAddress"]
+    }).then(users => {
       const user = users.find(u => u.emailAddress === credentials.name);
       if (user) {
         const authenticated = bcryptjs.compareSync(
