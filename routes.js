@@ -170,4 +170,16 @@ router.delete("/courses/:id", (req, res, next) => {
   });
 });
 
+// Updates a course and returns no content
+router.put("/courses/:id", (req, res, next) => {
+  Course.findByPk(req.params.id).then(course => {
+    if (course) {
+      course.update(req.body);
+      res.status(204).end();
+    } else {
+      res.status(400).json("Course not found");
+    }
+  });
+});
+
 module.exports = router;
