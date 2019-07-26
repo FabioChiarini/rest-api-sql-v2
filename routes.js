@@ -83,28 +83,24 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const user = req.body;
-    console.log("EMAIL " + user.emailAddress);
-    User.findOne({
+    User.findAndCountAll({
       where: {
         emailAddress: user.emailAddress
       }
     }).then(match => {
-      console.log(match);
-      if (match) {
-        console.log("ESISTE");
+      if (match.count > 0) {
+        res.status(400).json("User already registered");
       } else {
-        console.log("NON ESISTE");
+        user.password = bcryptjs.hashSync(user.password);
+        User.create(user)
+          .then(() => {
+            res.status(201).redirect("/");
+          })
+          .catch(err => {
+            res.status(500).json(err);
+          });
       }
     });
-
-    user.password = bcryptjs.hashSync(user.password);
-    User.create(user)
-      .then(() => {
-        res.status(201).redirect("/");
-      })
-      .catch(err => {
-        res.status(500).json(err);
-      });
   }
 );
 
