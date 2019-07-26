@@ -185,8 +185,6 @@ router.delete("/courses/:id", authenticateUser, (req, res, next) => {
   const user = req.currentUser;
 
   Course.findByPk(req.params.id).then(course => {
-    console.log(user.id);
-    console.log(course.userId);
     if (course) {
       if (course.userId === user.id) {
         course.destroy();
@@ -204,10 +202,18 @@ router.delete("/courses/:id", authenticateUser, (req, res, next) => {
 
 // Updates a course and returns no content
 router.put("/courses/:id", authenticateUser, (req, res, next) => {
+  const user = req.currentUser;
+
   Course.findByPk(req.params.id).then(course => {
     if (course) {
-      course.update(req.body);
-      res.status(204).end();
+      if (course.userId === user.id) {
+        course.update(req.body);
+        res.status(204).end();
+      } else {
+        res
+          .status(403)
+          .json("ACCESS DENIED, YOUR ID DOESN'T MATCH THE COURSE ONE");
+      }
     } else {
       res.status(400).json("Course not found");
     }
