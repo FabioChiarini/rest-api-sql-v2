@@ -14,9 +14,7 @@ const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
   if (credentials) {
-    User.findAll({
-      attributes: ["id", "firstName", "lastName", "emailAddress"]
-    }).then(users => {
+    User.findAll().then(users => {
       const user = users.find(u => u.emailAddress === credentials.name);
       if (user) {
         const authenticated = bcryptjs.compareSync(
@@ -52,7 +50,9 @@ router.get("/users", authenticateUser, (req, res, next) => {
   const user = req.currentUser;
 
   res.json({
+    id: user.id,
     name: user.firstName,
+    lastname: user.lastName,
     username: user.emailAddress
   });
 });
