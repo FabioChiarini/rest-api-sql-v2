@@ -10,6 +10,7 @@ const auth = require("basic-auth");
 var User = require("./db").User;
 var Course = require("./db").Course;
 
+// Authentication
 const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
@@ -48,7 +49,6 @@ const authenticateUser = (req, res, next) => {
 // Returns the currently authenticated user
 router.get("/users", authenticateUser, (req, res, next) => {
   const user = req.currentUser;
-
   res.json({
     id: user.id,
     name: user.firstName,
@@ -82,6 +82,7 @@ router.post(
       const errorMessages = errors.array().map(error => error.msg);
       return res.status(400).json({ errors: errorMessages });
     }
+    // search if the email is already registered
     const user = req.body;
     User.findAndCountAll({
       where: {
@@ -94,7 +95,7 @@ router.post(
         user.password = bcryptjs.hashSync(user.password);
         User.create(user)
           .then(() => {
-            res.status(201).redirect("/");
+            res.status(201).location("/");
           })
           .catch(err => {
             res.status(500).json(err);
