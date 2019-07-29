@@ -95,7 +95,10 @@ router.post(
         user.password = bcryptjs.hashSync(user.password);
         User.create(user)
           .then(() => {
-            res.status(201).location("/");
+            res
+              .status(201)
+              .location("/")
+              .end();
           })
           .catch(err => {
             res.status(500).json(err);
@@ -138,7 +141,7 @@ router.post(
       .withMessage('Please provide a value for "title"'),
     check("description")
       .exists({ checkNull: true, checkFalsy: true })
-      .withMessage('Please provide a value for "firstName"'),
+      .withMessage('Please provide a value for "description"'),
     check("userId")
       .exists({ checkNull: true, checkFalsy: true })
       .isNumeric()
@@ -202,23 +205,41 @@ router.delete("/courses/:id", authenticateUser, (req, res, next) => {
 });
 
 // Updates a course and returns no content
-router.put("/courses/:id", authenticateUser, (req, res, next) => {
-  const user = req.currentUser;
+router.put(
+  "/courses/:id",
+  authenticateUser,
+  [
+    check("title")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "title"'),
+    check("description")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "description"')
+  ],
+  (req, res, next) => {
+    const user = req.currentUser;
+    const errors = validationResult(req);
 
-  Course.findByPk(req.params.id).then(course => {
-    if (course) {
-      if (course.userId === user.id) {
-        course.update(req.body);
-        res.status(204).end();
-      } else {
-        res
-          .status(403)
-          .json("ACCESS DENIED, YOUR ID DOESN'T MATCH THE COURSE ONE");
-      }
-    } else {
-      res.status(400).json("Course not found");
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map(error => error.msg);
+      return res.status(400).json({ errors: errorMessages });
     }
-  });
-});
+
+    Course.findByPk(req.params.id).then(course => {
+      if (course) {
+        if (course.userId === user.id) {
+          course.update(req.body);
+          res.status(204).end();
+        } else {
+          res
+            .status(403)
+            .json("ACCESS DENIED, YOUR ID DOESN'T MATCH THE COURSE ONE");
+        }
+      } else {
+        res.status(400).json("Course not found");
+      }
+    });
+  }
+);
 
 module.exports = router;
