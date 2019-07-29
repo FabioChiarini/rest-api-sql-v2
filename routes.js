@@ -14,7 +14,7 @@ var Course = require("./db").Course;
 const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
-  if (credentials) {
+  if (credentials.name && credentials.pass) {
     User.findAll().then(users => {
       const user = users.find(u => u.emailAddress === credentials.name);
       if (user) {
@@ -28,10 +28,18 @@ const authenticateUser = (req, res, next) => {
           req.currentUser = user;
           next();
         } else {
-          message = `Authentication failure for username: ${user.emailAddress}`;
+          console.warn(
+            `Authentication failure for username: ${user.emailAddress}`
+          );
+          res.status(401).json({
+            message: "ACCESS DENIED"
+          });
         }
       } else {
-        message = `User ${user.emailAddress} not found`;
+        console.warn(`User not found`);
+        res.status(401).json({
+          message: "ACCESS DENIED"
+        });
       }
     });
   } else {
