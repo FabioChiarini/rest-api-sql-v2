@@ -14,7 +14,8 @@ var Course = require("./db").Course;
 const authenticateUser = (req, res, next) => {
   let message = null;
   const credentials = auth(req);
-  if (credentials.name && credentials.pass) {
+  console.log(credentials);
+  if (credentials) {
     User.findAll().then(users => {
       const user = users.find(u => u.emailAddress === credentials.name);
       if (user) {
@@ -43,11 +44,7 @@ const authenticateUser = (req, res, next) => {
       }
     });
   } else {
-    message = `Auth header not found`;
-  }
-
-  if (message) {
-    console.warn(message);
+    console.warn("Auth header not found");
     res.status(401).json({
       message: "ACCESS DENIED"
     });
